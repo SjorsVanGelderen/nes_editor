@@ -32,6 +32,25 @@ Copyright 2017, Sjors van Gelderen
 (define gray (sdl2:make-color 202 216 203))
 (define red (sdl2:make-color 255 1 1))
 
+;; Palette
+(define palette
+  (list (sdl2:make-color 101 101 101)
+	(sdl2:make-color 3 47 103)
+	(sdl2:make-color 21 35 125)
+	(sdl2:make-color 60 26 122)
+	(sdl2:make-color 95 18 97)
+	(sdl2:make-color 114 14 55)
+	(sdl2:make-color 112 16 13)
+	(sdl2:make-color 89 26 5)
+	(sdl2:make-color 52 40 3)
+	(sdl2:make-color 13 51 3)
+	(sdl2:make-color 3 59 4)
+	(sdl2:make-color 4 60 19)
+	(sdl2:make-color 3 56 63)
+	(sdl2:make-color 0 0 0) ;; Not used?
+	(sdl2:make-color 0 0 0) ;; Not used?
+	(sdl2:make-color 0 0 0))) ;; Not used?
+
 ;; Initialize SDL
 (sdl2:set-main-ready!)
 (sdl2:init! '(video))
@@ -54,6 +73,17 @@ Copyright 2017, Sjors van Gelderen
 		window_width
 		window_height))
 
+;; Loop for drawing the palette
+(define draw-palette
+  (lambda (list)
+    (let loop ((l list) (w (floor (* window_height 0.1))))
+      (when (> (length list) 0)
+	(sdl2:fill-rect!
+	 (sdl2:window-surface window)
+	 (sdl2:make-rect (* (- 16 (length list)) w) w w w)
+	 (car list))
+	(loop ((tail list) w))))))
+
 ;; The main program loop
 (define (main-loop theta)
   ;; Get new events
@@ -67,16 +97,19 @@ Copyright 2017, Sjors van Gelderen
        
        (if (eq? program-mode 'nametable)
 	   ;; Draw a rectangle
-	   (sdl2:fill-rect! (sdl2:window-surface window)
-			    (sdl2:make-rect
-			     (floor (- (+ (/ window_width 2)
-					  (* (/ window_height 5) (cos theta)))
-				       50))
-			     (floor (- (+ (/ window_height 2)
-					  (* (/ window_height 5) (sin theta)))
-				       50))
-			     100 100)
-			    gray))
+	   (sdl2:fill-rect!
+	    (sdl2:window-surface window)
+	    (sdl2:make-rect
+	     (floor (- (+ (/ window_width 2)
+			  (* (/ window_height 5) (cos theta)))
+		       50))
+	     (floor (- (+ (/ window_height 2)
+			  (* (/ window_height 5) (sin theta)))
+		       50))
+	     100 100)
+	    gray))
+
+       (draw-palette palette)
        
        ;; Draw some buttons
        (gui-button 0 0 128 128 red window)
