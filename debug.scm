@@ -1,14 +1,14 @@
 #|
-Debug message logging logic
+Debug logic
 Copyright 2017, Sjors van Gelderen
 |#
 
 (declare (unit debug))
 
-(define debug-enabled) ;; Debug toggle
+(define debug-enabled #f) ;; Debug toggle
 
-(define (debug-enable () (set! debug-enabled #t)))
-(define (debug-disable () (set! debug-enabled #f)))
+(define (debug-enable) (set! debug-enabled #t))
+(define (debug-disable) (set! debug-enabled #f))
 
 (define (debug-log level message)
     (let ((kind
