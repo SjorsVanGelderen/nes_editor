@@ -10,6 +10,7 @@ Copyright 2017, Sjors van Gelderen
 ;; Prefixes
 (use (prefix sdl2 sdl2:))
 
+#|
 ;; Label - Currently ignores caption
 (define (gui-label rect color caption size)
   (gui-draw-label rect color caption size))
@@ -26,12 +27,12 @@ Copyright 2017, Sjors van Gelderen
 (define (gui-button rect color caption size action mailbox)
   (gui-draw-label rect color caption size)
   (action))
+|#
 
 ;; Palette
 ;; Loop for drawing the palette - Fix incorrect positioning (also flipped vertically)
-#|
 (define (gui-draw-palette)
-  (let loop ((p palette)
+  (let loop ((p palette_colors)
 	     (s (floor (* window_height 0.025))))
     (unless (= (length p) 0)
       (sdl2:fill-rect!
@@ -43,4 +44,3 @@ Copyright 2017, Sjors van Gelderen
        (car p))
       
       (loop (cdr p) s))))
-|#
