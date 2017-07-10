@@ -11,17 +11,20 @@ Copyright 2017, Sjors van Gelderen
 (use (prefix sdl2 sdl2:))
 
 ;; Label - Currently ignores caption
-(define (gui-label x y w h color caption size)
-  (gui-draw-label x y w h color caption size))
+(define (gui-label rect color caption size)
+  (gui-draw-label rect color caption size))
 
-(define (gui-draw-label x y w h color caption size)
+(define (gui-draw-label rect color caption size)
   (sdl2:fill-rect! (sdl2:window-surface window)
-		   (sdl2:make-rect x y w h)
+		   (sdl2:make-rect (cdr (assq 'x rect))
+				   (cdr (assq 'y rect))
+				   (cdr (assq 'w rect))
+				   (cdr (assq 'h rect)))
 		   color))
 
 ;; Button
-(define (gui-button x y w h color caption size action mailbox)
-  (gui-draw-label x y w h color caption size)
+(define (gui-button rect color caption size action mailbox)
+  (gui-draw-label rect color caption size)
   (action))
 
 ;; Palette

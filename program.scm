@@ -5,7 +5,8 @@ Copyright 2017, Sjors van Gelderen
 
 ;; Imports
 (declare (uses debug)
-	 (uses gui))
+	 (uses gui)
+	 (uses math))
 
 ;; Prefixes
 (use (prefix sdl2 sdl2:)
@@ -135,14 +136,14 @@ Copyright 2017, Sjors van Gelderen
        ;; Draw the background
        (sdl2:fill-rect! (sdl2:window-surface window) #f dark_gray)
        
-       ;; Process a label
-       (gui-label 0 0 128 64 red "Hello, World!" 1)
-
-       ;; Process a button
-       (gui-button 0 128 128 64 blue "OK then" 1 (lambda () (print "OK")) 0)
-       
        ;; Draw the NES compatible palette
        ;;(gui-draw-palette)
+       
+       ;; Process a label
+       (gui-label (math-rect 0 0 128 64) red "Hello, World!" 1)
+       
+       ;; Process a button
+       ;;(gui-button 0 128 128 64 blue "OK then" 1 (lambda () (print "OK")) 0)
        
        ;; Draw some buttons
        #|
