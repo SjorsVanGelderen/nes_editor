@@ -1,6 +1,0 @@
-#|
-Extra math logic
-Copyright 2017, Sjors van Gelderen
-|#
-
-(define (rect x y w h))
