@@ -109,29 +109,27 @@ Copyright 2017, Sjors van Gelderen
   (let loop ((rgb_list palette_rgb_values)
 	     (color_list (list)))
     (if (> (length rgb_list) 0)
-      (let ((rgb (car rgb_list)))
-	(loop (cdr rgb_list)
-	      (cons (sdl2:make-color (vector-ref rgb 0)
-				     (vector-ref rgb 1)
-				     (vector-ref rgb 2))
-		    color_list)))
-      color_list)))
+	(let ((rgb (car rgb_list)))
+	  (loop (cdr rgb_list)
+		(cons (sdl2:make-color (vector-ref rgb 0)
+				       (vector-ref rgb 1)
+				       (vector-ref rgb 2))
+		      color_list)))
+	color_list)))
 
 ;; Initialize SDL
 (sdl2:set-main-ready!)
 (sdl2:init! '(video))
 
 ;; Schedule clean quit
-;;(on-exit sdl2:quit!)
+(on-exit sdl2:quit!)
 
 ;; If any unhandled exception should occur,  SDL2 subsystem will be terminated
-#|
 (current-exception-handler
  (let ((original-handler (current-exception-handler)))
    (lambda (exception)
      (sdl2:quit!)
      (original-handler exception))))
-|#
 
 ;; Create a window
 (define window (sdl2:create-window!
@@ -142,60 +140,21 @@ Copyright 2017, Sjors van Gelderen
 		window_height))
 
 ;; The main program loop
-(define (main-loop theta)
-  (if (not (sdl2:quit-requested?))
-      (;; Flush event stack
-       (sdl2:flush-events! 'first 'last)
-       
-       ;; Draw the background
-       (sdl2:fill-rect! (sdl2:window-surface window) #f dark_gray)
-       
-       ;; Draw the NES compatible palette
-       (gui-draw-palette)
-       
-       ;; Process a label
-       ;;(gui-label (math-rect 0 0 128 64) red "Hello, World!" 1)
-       
-       ;; Process a button
-       ;;(gui-button 0 128 128 64 blue "OK then" 1 (lambda () (print "OK")) 0)
-       
-       ;; Draw some buttons
-       #|
-       (gui-button 0 0
-       (floor (/ window_width 4))
-       (floor (/ window_height 10))
-       red
-       window)
+(define (main-loop)
+  (let logic ((theta 0))
+    
+    (let poll-loop ()
+      (if (not (eq? (sdl2:poll-event!) #f))
+	  (poll-loop)))
+    
+    (sdl2:fill-rect! (sdl2:window-surface window) #f dark_gray)
+    (gui-draw-palette)
+    (sdl2:update-window-surface! window)
+    
+    (sdl2:delay! 10)
 
-       (gui-button (/ window_width 4) 0
-       (/ window_width 4) (/ window_height 10)
-       blue
-       window)
-       
-       (gui-button (* (/ window_width 4) 2) 0
-       (/ window_width 4) (/ window_height 10)
-       green
-       window)
-       
-       (gui-button (* (/ window_width 4) 3) 0
-       (/ window_width 4) (/ window_height 10)
-       purple
-       window)
-       |#
-       
-       ;; Flip the screen
-       (sdl2:update-window-surface! window)
-       
-       ;; Let CPU rest
-       (sdl2:delay! 10)
-       
-       ;; Get new events
-       (sdl2:pump-events!)
-       
-       ;; Recursively loop
-       (main-loop (+ theta 0.1)))
-      
-      (print "Quitting...")))
+    (if (not (sdl2:quit-requested?))
+	(logic (+ theta 0.1)))))
 
 ;; Start the loop
-(main-loop 0)
+(main-loop)
