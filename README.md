@@ -1,2 +1,2 @@
-# nes_editor
+# NES editor
 NES editing suite
