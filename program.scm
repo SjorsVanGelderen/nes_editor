@@ -17,7 +17,18 @@ Copyright 2017, Sjors van Gelderen
 (debug-enable)
 
 ;; Program state
-(define program-mode 'nametable)
+(define program_state
+  '((mode nametable)
+    (theta 0)))
+
+;; Extract an entry from the state
+(define (query-state which state)
+  (let loop ((s state))
+    (if (> (length s) 0)
+	(if (equal? which (caar s))
+	    (cdar s)
+	    (loop (cdr s)))
+	"Not found")))
 
 ;; Window properties
 (define window_caption "NES Editor")
@@ -50,20 +61,23 @@ Copyright 2017, Sjors van Gelderen
 
 ;; The main program loop
 (define (main-loop)
-  (let logic ((theta 0))
+  (let logic ((state program_state))
     
-    (let poll-loop ()
-      (if (not (eq? (sdl2:poll-event!) #f))
-	  (poll-loop)))
+    (let poll-loop ((e (sdl2:wait-event!)))
+      (case (sdl2:event-type e)
+	((mouse-button-down)
+	 (print (mouse-button-event-x e)))))
     
     (sdl2:fill-rect! (sdl2:window-surface window) #f dark_gray)
-    (gui-draw-palette 32 32)
+    (gui-palette 32 32 0 0)
     (sdl2:update-window-surface! window)
     
     (sdl2:delay! 10) ;; Throttle CPU
 
+    (print (query-state 'theta state))
+    
     (if (not (sdl2:quit-requested?))
-	(logic (+ theta 0.1)))))
+	(logic state))))
 
 ;; Start the loop
 (main-loop)

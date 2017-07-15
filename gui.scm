@@ -120,8 +120,7 @@ Copyright 2017, Sjors van Gelderen
 		      color_list)))
 	color_list)))
 
-;; Loop for drawing the palette - Requires better formula
-(define (gui-draw-palette x y)
+(define (gui-palette x y mouse_x mouse_y)
   (let loop ((p palette_colors)
 	     (s (floor (* window_height 0.025))))
     (unless (= (length p) 0)
