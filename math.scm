@@ -1,5 +1,4 @@
 #|
-Extra math logic
 Copyright 2017, Sjors van Gelderen
 |#
 

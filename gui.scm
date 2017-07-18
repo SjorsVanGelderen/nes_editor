@@ -1,5 +1,4 @@
 #|
-GUI element logic
 Copyright 2017, Sjors van Gelderen
 |#
 
@@ -7,29 +6,10 @@ Copyright 2017, Sjors van Gelderen
 	 (uses debug))
 	 ;;(uses math))
 
-;; Prefixes
+
 (use (prefix sdl2 sdl2:))
 
-#|
-;; Label - Currently ignores caption
-(define (gui-label rect color caption size)
-  (gui-draw-label rect color caption size))
 
-(define (gui-draw-label rect color caption size)
-  (sdl2:fill-rect! (sdl2:window-surface window)
-		   (sdl2:make-rect (cdr (assq 'x rect))
-				   (cdr (assq 'y rect))
-				   (cdr (assq 'w rect))
-				   (cdr (assq 'h rect)))
-		   color))
-
-;; Button
-(define (gui-button rect color caption size action mailbox)
-  (gui-draw-label rect color caption size)
-  (action))
-|#
-
-;; Colors
 (define black     (sdl2:make-color   0   0  12))
 (define dark_gray (sdl2:make-color  80 100  91))
 (define gray      (sdl2:make-color 202 216 203))
@@ -37,6 +17,7 @@ Copyright 2017, Sjors van Gelderen
 (define green     (sdl2:make-color   0 200   0))
 (define purple    (sdl2:make-color 150   0 150))
 (define blue      (sdl2:make-color   0   0 200))
+
 
 (define palette_rgb_values
   (list #(101 101 101)
@@ -107,7 +88,7 @@ Copyright 2017, Sjors van Gelderen
 	#(  0   0   0)
 	#(  0   0   0)))
 
-;; NES palette
+
 (define palette_colors
   (let loop ((rgb_list palette_rgb_values)
 	     (color_list (list)))
@@ -120,16 +101,37 @@ Copyright 2017, Sjors van Gelderen
 		      color_list)))
 	color_list)))
 
-(define (gui-palette x y mouse_x mouse_y)
+
+(define (process-palette x y state)
   (let loop ((p palette_colors)
 	     (s (floor (* window_height 0.025))))
-    (unless (= (length p) 0)
+    
+    (if (> (length p) 0)
+	(begin
+	  (sdl2:fill-rect!
+	   (sdl2:window-surface window)
+	   (sdl2:make-rect
+	    (+ (* (modulo   (- (length p) 1) 16) s) x)
+	    (+ (* (quotient (- (length p) 1) 16) s) y)
+	    s s)
+	   (car p))
+	  (loop (cdr p) s))
+	
+	state)))
+
+
+(define (process-active-color x y state)
+  (begin
+    (let ((s (floor (* window_height 0.025))))
       (sdl2:fill-rect!
        (sdl2:window-surface window)
-       (sdl2:make-rect
-	(+ (* (modulo   (- (length p) 1) 16) s) x)
-	(+ (* (quotient (- (length p) 1) 16) s) y)
-	s s)
-       (car p))
-      
-      (loop (cdr p) s))))
+       (sdl2:make-rect x y s s)
+       (sdl2:make-color 255 255 255)))
+    
+    state))
+
+
+(define (draw-background state)
+  (begin
+    (sdl2:fill-rect! (sdl2:window-surface window) #f dark_gray)
+    state))
